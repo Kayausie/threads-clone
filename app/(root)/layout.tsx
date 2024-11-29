@@ -36,7 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Topbar/>
-        <main>
+        <main className="flex flex-row">
           <Leftsidebar/>
           <section className="main-container">
             <div className="w-full max-w-4xl">
