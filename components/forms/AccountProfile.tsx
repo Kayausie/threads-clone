@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input";
+import { generateClientDropzoneAccept, generatePermittedFileTypes } from "uploadthing/client";
 import { z } from "zod"
 import {zodResolver} from '@hookform/resolvers/zod'
 import { UserValidation } from '@/lib/validations/user';
@@ -20,6 +21,13 @@ import { ChangeEvent, useState } from 'react';
 import { Textarea } from '../ui/textarea';
 import { isBase64Image } from '@/lib/utils';
 import { useUploadThing } from '@/lib/uploadthing';
+import { useDropzone } from "@uploadthing/react";
+import mongoose from 'mongoose';
+import User from '@/lib/models/user.model';
+import { updateUser } from '@/lib/actions/user.actions';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+import { start } from 'repl';
 
 interface Props{
     user:{
@@ -34,17 +42,21 @@ interface Props{
 }
 const AccountProfile =({user, btnTitle}:Props)=>{
     const [files, setFiles] = useState<File[]>([])
-    const { startUpload} = useUploadThing("mediaUpload", {
-        onClientUploadComplete: () => {
-          alert("uploaded successfully!");
-        },
-        onUploadError: () => {
-          alert("error occurred while uploading");
-        },
-        onUploadBegin: (fileString ) => {
-          console.log("upload has begun for", fileString);
-        },
-      });
+    const pathname = usePathname()
+    const router = useRouter()
+    const { startUpload, routeConfig} = useUploadThing("media", {
+        onClientUploadComplete: (response) => {
+            console.log("Upload successful:", response);
+            alert("Upload completed successfully!");
+          },
+          onUploadError: (error) => {
+            console.error("Upload error:", error);
+            alert("An error occurred during upload."+error);
+          },
+          onUploadBegin: ( file) => {
+            console.log("Upload started for file:", file);
+          },
+        });
     const form = useForm<z.infer<typeof UserValidation>>({
         resolver:zodResolver(UserValidation),
         defaultValues:{
@@ -55,17 +67,30 @@ const AccountProfile =({user, btnTitle}:Props)=>{
         }
     })
     const onSubmit = async (values: z.infer<typeof UserValidation>) => {
+       
         const blob = values.profile_photo;
         const hasImageChanged = isBase64Image(blob)
         if(hasImageChanged){
-            const imgRes = await startUpload(files)
+           
+                console.log("Starting upload...");
+               const imgRes= await startUpload(files)// Does not return data directly
+                console.log(imgRes)
             if(imgRes&&imgRes[0].url){
                 values.profile_photo=imgRes[0].url
             }
         }
+        await updateUser({userId:user.id
+            ,username:values.username, name:values.name, bio:values.bio, image:values.profile_photo, path:pathname
+        }) 
+        if(pathname==='/profile/edit')
+        {
+            router.back()
+        }else{
+            router.push('/')
+        }
+        
         //TODO: Update User Profile
 
-        
       }
     const handleImage=(e:ChangeEvent<HTMLInputElement>, fieldChange:(value:string)=>void)=>{
         e.preventDefault()
@@ -170,6 +195,19 @@ const AccountProfile =({user, btnTitle}:Props)=>{
               </FormItem>
             )}
           />
+          {/* <div {...getRootProps()}>
+            <input {...getInputProps()} />
+            <div>
+                {files.length > 0 && (
+                <button className='bg-primary-500 text-light-1' onClick={() => startUpload(files)}>
+                    Upload {files.length} files
+                </button>
+                )}
+            </div>
+            <p className='text-light-1'>
+            Drop files here!
+            </p>
+            </div> */}
           <Button type="submit" className="bg-primary-500">Submit</Button>
         </form>
       </Form>

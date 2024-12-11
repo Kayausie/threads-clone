@@ -3,12 +3,12 @@ import { UploadThingError } from "uploadthing/server";
 import { currentUser } from "@clerk/nextjs/server";
 
 const f = createUploadthing();
-const getUser = async ()=> await currentUser()
+const getUser = async () => await currentUser();
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  mediaUpload: f({
+  media: f({
     image: {
       /**
        * For full list of options and defaults, see the File Route API reference
