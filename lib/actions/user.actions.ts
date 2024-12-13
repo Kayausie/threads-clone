@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import User from "../models/user.model"
 import { connectToDB } from "../mongoose"
+import path from "path"
 
 interface Props{
     userId:string,
@@ -12,7 +13,6 @@ interface Props{
     image:string,
     path:string,
 }
-
 
 export async function updateUser({userId
     ,username, name, bio, image, path
@@ -40,3 +40,22 @@ export async function updateUser({userId
 }
 }
 
+export async function fetchUser(userId
+:String) {
+    try{
+        
+    connectToDB()
+    return await User.findOne(
+        {id:userId}
+    )
+    // .populate({
+    //     path:"communities",
+    //     model:"Community"
+    // }
+    // )
+    //Todo: making calls 
+    
+}catch(error:any){
+    throw new Error(`Failed to create/update record, error:${error.message}`)
+}
+}
