@@ -20,8 +20,12 @@ function Leftsidebar() {
                 href={link.route}
                 key={link.label}
                 className={`leftsidebar_link ${isActive && 'bg-primary-500'}`}>
-                    <Image src={link.imgURL} alt={link.label} width={24} height={24}/>
-                    <p className="text-light-1 max-lg:hidden">{link.label}</p>
+                    <Image src={link.imgURL} alt={link.label} width={24} height={24} style={{
+          filter: isActive
+            ? "invert(95%) sepia(7%) saturate(239%) hue-rotate(180deg)"
+            : "invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg)",
+        }}/>
+                    <p className={`${isActive? 'text-dark-1':'text-light-1'} max-lg:hidden`}>{link.label}</p>
                 </Link>
                 )}
             )}

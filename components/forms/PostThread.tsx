@@ -15,24 +15,11 @@ import { ThreadValidation } from '@/lib/validations/thread';
 import { z } from "zod"
 import {zodResolver} from '@hookform/resolvers/zod'
 import { Textarea } from '../ui/textarea';
-import mongoose from 'mongoose';
 import { usePathname, useRouter } from 'next/navigation';
-import createThread from '@/lib/actions/thread.actions';
+import {createThread} from '@/lib/actions/thread.actions';
+import { revalidatePath } from 'next/cache';
 // import { UserValidation } from '@/lib/validations/user';
 // import { updateUser } from '@/lib/actions/user.actions';
-
-
-interface Props{
-    user:{
-        id:string;
-        objectId:string;
-        username:string;
-        name:string;
-        bio: string;
-        image: string;
-    };
-    btnTitle:string;
-}
 
    
 function PostThread({userId}:{userId:string}){
@@ -53,6 +40,7 @@ function PostThread({userId}:{userId:string}){
             path:pathname
         });
         router.push("/")
+        revalidatePath("/")
     }
      return(
         <Form {...form}>
@@ -73,7 +61,7 @@ function PostThread({userId}:{userId:string}){
             )}
           />
           
-          <Button type="submit" className="bg-primary-500">Post Thread</Button>
+          <Button type="submit" className="text-dark-1 bg-primary-500">Post Thread</Button>
         </form>
       </Form> 
          
