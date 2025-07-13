@@ -32,7 +32,7 @@ export default function ThreadCard({
    community,
     createdAt,
     comments,
-    isComment=false
+    isComment=true
 }:Props){
     return(
         <article className={`flex w-full flex-col rounded-xl ${isComment?'px-0 xs:px-7': 'bg-dark-2 p-7'}`}>
@@ -54,7 +54,7 @@ export default function ThreadCard({
                         <h4 className="cursor-pointer text-base-semibold text-light-1">{author.name}</h4>
                         </Link>
                         <p className="mt-2 text-small-regular text-light-2">{content}</p>
-                        <div className="mt-5 flex flex-col gap-3">
+                        <div className={`${ isComment && 'mb-10'} mt-5 flex flex-col gap-3`}>
                             <div className="flex gap-3.5">
                                 <Image src="/assets/heart-gray.svg" alt="heart" width={24} height={24} className="cursor-pointer object-contain"></Image>
                                 <Link href={`/thread/${id}`}>
@@ -65,7 +65,7 @@ export default function ThreadCard({
                             </div>
                         {isComment && comments.length>0 &&(
                             <Link href={`/thread/${id}`}>
-                                <p className="mt-1 text-subtle-medium text-gray-1">{comments.length} replies</p>
+                                <p className="mt-1 text-subtle-medium text-light-1">{comments.length} replies</p>
                             </Link>
                         )}
                         </div>

@@ -17,7 +17,7 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import { Textarea } from '../ui/textarea';
 import { usePathname, useRouter } from 'next/navigation';
 import {createThread} from '@/lib/actions/thread.actions';
-import { revalidatePath } from 'next/cache';
+import revalidate from '@/app/api/actions';
 // import { UserValidation } from '@/lib/validations/user';
 // import { updateUser } from '@/lib/actions/user.actions';
 
@@ -40,7 +40,7 @@ function PostThread({userId}:{userId:string}){
             path:pathname
         });
         router.push("/")
-        revalidatePath("/")
+        revalidate()
     }
      return(
         <Form {...form}>
