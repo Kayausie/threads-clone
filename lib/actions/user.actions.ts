@@ -5,6 +5,7 @@ import User from "../models/user.model"
 import { connectToDB } from "../mongoose"
 import path from "path"
 import Thread from "../models/thread.model"
+import { SortOrder } from "mongoose"
 
 interface Props{
     userId:string,
@@ -14,7 +15,13 @@ interface Props{
     image:string,
     path:string,
 }
-
+interface UserSearchProps{
+    userId:string,
+    searchString?:string,
+    pageNumber?:number,
+    pageSize?:number,
+    sortby?:SortOrder
+}
 export async function updateUser({userId
     ,username, name, bio, image, path
 }:Props):Promise<void> {
@@ -85,4 +92,23 @@ export async function fetchThreadsbyUser(userId:String){
     catch(error:any){
     throw new Error(`Failed to fetch user's threads record, error:${error.message}`)
 }
+}
+export async function fetchUsers({
+    userId,
+    searchString="",
+    pageNumber=1,
+    pageSize=20,
+    sortby = "desc"
+}:UserSearchProps){
+    try {
+        connectToDB()
+        const skipAmount = (pageNumber - 1) * pageSize;
+        const regex = new RegExp(searchString, 'i')
+        const query = {
+            id: {$ne:userId},
+
+        }
+    } catch (error) {
+        
+    }
 }
