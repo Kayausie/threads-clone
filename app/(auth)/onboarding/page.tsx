@@ -4,11 +4,19 @@ import { SignOutButton } from '@clerk/nextjs'
 import { currentUser } from "@clerk/nextjs/server";
 export default async function Page(){
     const user = await currentUser();
-    const userInfo = {}
+    if(!user) return null;
+
+    const userInfo: Partial<{
+        _id: string;
+        username: string;
+        name: string;
+        bio: string;
+        image: string;
+    }> = {}
     const userData ={
-        id:user?.id,
-        objectId:userInfo?._id,
-        username:userInfo?.username || user?.username,
+        id:user.id,
+        objectId:userInfo._id || "",
+        username:userInfo?.username || user?.username || "",
         name:userInfo?.name || user?.firstName || "",
         bio: userInfo?.bio || "",
         image: userInfo?.image || user?.imageUrl || ""

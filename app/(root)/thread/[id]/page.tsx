@@ -4,9 +4,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import { fetchThreadbyId } from "@/lib/actions/thread.actions";
 import {redirect} from "next/navigation";
 import Comment from "@/components/forms/Comment";
-export default async function Page({params}:{params:{id:string}}){
-    if(!params.id) return null;
-    const thread = await fetchThreadbyId(params.id)
+export default async function Page({params}:{params: Promise<{id:string}>}){
+    const { id } = await params;
+    if(!id) return null;
+    const thread = await fetchThreadbyId(id)
     const user = await currentUser();
     if(!user) return null;
     const userInfo = await fetchUser(user.id)
