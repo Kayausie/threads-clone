@@ -11,6 +11,9 @@ permissions:
 jobs:
   e2e:
     name: Playwright E2E
+    environment:
+      name: ${{ github.event.client_payload.environment }}
+      deployment: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
