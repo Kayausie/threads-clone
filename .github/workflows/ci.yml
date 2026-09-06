@@ -49,6 +49,10 @@ jobs:
       - name: Production build
         run: pnpm run build
         env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          # Clerk requires a valid-looking public key while prerendering. The
+          # non-secret fallback keeps CI builds working when secrets are not
+          # available, such as pull requests from forks.
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_ZXhhbXBsZS1leGFtcGxlLTEuY2xlcmsuYWNjb3VudHMuZGV2JA==' }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          CLERK_TELEMETRY_DISABLED: "1"
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
