@@ -2,6 +2,7 @@
   "name": "threads-clone",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.7.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,8 +12,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.5.0",
-    "@clerk/themes": "^2.1.48",
+    "@clerk/nextjs": "6.5.0",
+    "@clerk/themes": "2.1.48",
     "@hookform/resolvers": "^3.9.1",
     "@playwright/test": "^1.63.0",
     "@radix-ui/react-label": "^2.1.0",
