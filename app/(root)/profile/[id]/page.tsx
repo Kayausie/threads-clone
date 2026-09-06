@@ -7,10 +7,10 @@ import PostThread from "@/components/forms/PostThread";
 import {Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { profileTabs } from "@/constants";
-export default async function Page({params}:{params:{id:string}}){
+export default async function Page({params}:{params: Promise<{ id: string }>;}){
     const user = await currentUser();
     if(!user) return null
-    const userInfo = await fetchUser(params.id)
+    const userInfo = await fetchUser((await params).id)
     if(!userInfo) redirect('/onboarding ')
     return(
         <section>
