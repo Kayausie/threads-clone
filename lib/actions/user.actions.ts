@@ -3,9 +3,8 @@
 import { revalidatePath } from "next/cache"
 import User from "../models/user.model"
 import { connectToDB } from "../mongoose"
-import path from "path"
 import Thread from "../models/thread.model"
-import { SortOrder } from "mongoose"
+import type { SortOrder } from "mongoose"
 
 interface Props{
     userId:string,
@@ -22,12 +21,16 @@ interface UserSearchProps{
     pageSize?:number,
     sortby?:SortOrder
 }
+
+const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : String(error);
+
 export async function updateUser({userId
     ,username, name, bio, image, path
 }:Props):Promise<void> {
     try{
         
-    connectToDB()
+    await connectToDB()
     await User.findOneAndUpdate(
         {id:userId},
         {
@@ -43,16 +46,15 @@ export async function updateUser({userId
     if(path === '/profile/edit'){
         revalidatePath(path)
     }
-}catch(error:any){
-    throw new Error(`Failed to create/update record, error:${error.message}`)
+}catch(error: unknown){
+    throw new Error(`Failed to create/update record, error:${getErrorMessage(error)}`)
 }
 }
 
-export async function fetchUser(userId
-:String) {
+export async function fetchUser(userId: string) {
     try{
         
-    connectToDB()
+    await connectToDB()
     return await User.findOne(
         {id:userId}
     )
@@ -63,13 +65,13 @@ export async function fetchUser(userId
     // )
     //Todo: making calls 
     
-}catch(error:any){
-    throw new Error(`Failed to create/update record, error:${error.message}`)
+}catch(error: unknown){
+    throw new Error(`Failed to create/update record, error:${getErrorMessage(error)}`)
 }
 }
-export async function fetchThreadsbyUser(userId:String){
+export async function fetchThreadsbyUser(userId: string){
     try{
-        connectToDB()
+        await connectToDB()
         const threads = await User.findOne(
             {id:userId}
         )
@@ -89,8 +91,8 @@ export async function fetchThreadsbyUser(userId:String){
         .exec()
         return threads
     }
-    catch(error:any){
-    throw new Error(`Failed to fetch user's threads record, error:${error.message}`)
+    catch(error: unknown){
+    throw new Error(`Failed to fetch user's threads record, error:${getErrorMessage(error)}`)
 }
 }
 export async function fetchUsers({
@@ -101,14 +103,19 @@ export async function fetchUsers({
     sortby = "desc"
 }:UserSearchProps){
     try {
-        connectToDB()
+        await connectToDB()
         const skipAmount = (pageNumber - 1) * pageSize;
-        const regex = new RegExp(searchString, 'i')
-        const query = {
-            id: {$ne:userId},
+        const regex = new RegExp(searchString, "i");
 
-        }
-    } catch (error) {
-        
+        return await User.find({
+            id: { $ne: userId },
+            $or: [{ username: regex }, { name: regex }],
+        })
+            .sort({ name: sortby })
+            .skip(skipAmount)
+            .limit(pageSize)
+            .exec();
+    } catch (error: unknown) {
+        throw new Error(`Failed to fetch users, error:${getErrorMessage(error)}`);
     }
 }

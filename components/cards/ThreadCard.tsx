@@ -25,12 +25,8 @@ interface Props{
 }
 export default function ThreadCard({
     id,
-   currentUserId,
-    parentId,
     content,
     author,
-   community,
-    createdAt,
     comments,
     isComment=true
 }:Props){

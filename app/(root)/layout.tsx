@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import {ClerkProvider} from '@clerk/nextjs';
 import localFont from "next/font/local";
 import "../globals.css";
-import Head from "next/head";
 import Bottombar from "@/components/shared/Bottombar";
 import Topbar from "@/components/shared/Topbar";
 import Leftsidebar from "@/components/shared/Leftsidebar";

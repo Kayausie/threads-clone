@@ -9,8 +9,6 @@ interface ProfileHeaderProps {
     bio:string
 }
 function ProfileHeader ({
-    accountId,
-    authUserId, 
     avatar,
     name,
     username,

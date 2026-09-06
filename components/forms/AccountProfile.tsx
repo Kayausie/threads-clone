@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,11 +34,11 @@ interface Props{
     };
     btnTitle:string;
 }
-const AccountProfile =({user, btnTitle}:Props)=>{
+const AccountProfile =({user}:Props)=>{
     const [files, setFiles] = useState<File[]>([])
     const pathname = usePathname()
     const router = useRouter()
-    const { startUpload, routeConfig} = useUploadThing("media", {
+    const { startUpload } = useUploadThing("media", {
         onClientUploadComplete: (response) => {
             console.log("Upload successful:", response);
             alert("Upload completed successfully!");
@@ -106,7 +105,7 @@ const AccountProfile =({user, btnTitle}:Props)=>{
         <FormField
             control={form.control}
             name="profile_photo"
-            render={({ field,fieldState }) => (
+            render={({ field }) => (
               <FormItem className="flex items-center gap-4">
                 <FormLabel className="account-form_image-label">
                     {field.value?(

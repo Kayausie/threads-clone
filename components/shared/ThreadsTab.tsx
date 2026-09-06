@@ -1,20 +1,41 @@
 import { fetchThreadsbyUser } from "@/lib/actions/user.actions"
-// import Thread from "@/lib/models/thread.model"
-import  Thread  from "@/lib/models/thread.model"
 import { redirect } from "next/navigation"
 import ThreadCard from "../cards/ThreadCard"
-import { Model } from "mongoose"
+
 interface ThreadsTabProps{
     currentUserId:string,
     accountId:string,
     accountType:string 
 }
+
+interface ThreadItem {
+    _id: string;
+    parentId: string | null;
+    text: string;
+    author: {
+        name: string;
+        image: string;
+        id: string;
+    };
+    community: {
+        name: string;
+        id: string;
+        image: string;
+    } | null;
+    createdAt: string;
+    children: {
+        author: {
+            image: string;
+        };
+    }[];
+}
+
 async function ThreadsTab({currentUserId, accountId, accountType}:ThreadsTabProps) {
-    let result = await fetchThreadsbyUser(accountId)
+    const result = await fetchThreadsbyUser(accountId)
     if(!result) redirect('/')
      return (
         <section className="mt-9 flex flex-col gap-10">
-            {result.threads.map((thread:any)=>( 
+            {result.threads.map((thread: ThreadItem)=>(
                     <ThreadCard
                     key={thread._id}
                     id={thread._id}
