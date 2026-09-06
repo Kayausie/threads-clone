@@ -4,7 +4,31 @@ import { currentUser } from "@clerk/nextjs/server";
 import { fetchThreadbyId } from "@/lib/actions/thread.actions";
 import {redirect} from "next/navigation";
 import Comment from "@/components/forms/Comment";
-export default async function Page({params}:{params: Promise<{id:string}>}){
+
+interface ThreadComment {
+    _id: string;
+    id?: string;
+    parentId: string | null;
+    text: string;
+    author: {
+        name: string;
+        image: string;
+        id: string;
+    };
+    community: {
+        name: string;
+        id: string;
+        image: string;
+    } | null;
+    createdAt: string;
+    children: {
+        author: {
+            image: string;
+        };
+    }[];
+}
+
+export default async function Page({params}:{ params: Promise<{ id: string }>}){
     const { id } = await params;
     if(!id) return null;
     const thread = await fetchThreadbyId(id)
@@ -35,7 +59,7 @@ export default async function Page({params}:{params: Promise<{id:string}>}){
             />
         </div>
         <div className="mt-10">
-             {thread.children.map((comment:any)=>(
+             {thread.children.map((comment: ThreadComment)=>(
                < ThreadCard
                 key={comment._id}
                 id={comment._id}

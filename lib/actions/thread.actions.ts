@@ -9,11 +9,15 @@ interface Params{
     communityId:string|null,
     path:string
 }
+
+const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : String(error);
+
 export async function createThread({
-text, author, communityId, path
+text, author, path
 }:Params){
     try{
-     connectToDB();
+     await connectToDB();
     const createdThread = await Thread.create({
         text,
         author, 
@@ -24,13 +28,13 @@ text, author, communityId, path
         $push:{threads:createdThread._id} 
      })
      revalidatePath(path)
-    }catch(error:any){
-        throw new Error(`Error creating thread ${error.message}`)
+    }catch(error: unknown){
+        throw new Error(`Error creating thread ${getErrorMessage(error)}`)
     }
 }
 export async function fetchPosts(pageNumber = 1, pageSize = 2){
     try {
-        connectToDB();
+        await connectToDB();
         const skipAmount = (pageNumber - 1) * pageSize;
         const postQuery = Thread
         .find({parentId:{$in :[null, undefined]}})
@@ -50,15 +54,15 @@ export async function fetchPosts(pageNumber = 1, pageSize = 2){
         const posts = await postQuery.exec();
         const isNext = totalPostCounts > (skipAmount + posts.length)
         return {posts, isNext}
-    }catch(error:any){
-        throw new Error(`Error fetching thread ${error.message}`)
+    }catch(error: unknown){
+        throw new Error(`Error fetching thread ${getErrorMessage(error)}`)
     }
 }
 
 export async function fetchThreadbyId(id:string) {
     //Todo: populate community
     try{
-        connectToDB();
+        await connectToDB();
         const thread = await Thread.findById(id)
         .populate({
             path:'author',
@@ -86,8 +90,8 @@ export async function fetchThreadbyId(id:string) {
         }).exec();
         return thread
     }
-    catch(e:any){
-        throw new Error(`Error fetching thread by Id: ${e.message}`)
+    catch(error: unknown){
+        throw new Error(`Error fetching thread by Id: ${getErrorMessage(error)}`)
     }
 }
 export async function addCommentToThread(
@@ -97,6 +101,7 @@ export async function addCommentToThread(
     path:string
 ){
     try {
+        await connectToDB();
         const originalThread =  await Thread.findById(threadId)
         if(!originalThread){
             throw new Error("Thread not found");
@@ -114,7 +119,7 @@ export async function addCommentToThread(
         //Save the new children thread
         await originalThread.save();
         revalidatePath(path)
-    } catch (error:any) {
-        throw new Error(`Error adding comment to thread: ${error.message}`)
+    } catch (error: unknown) {
+        throw new Error(`Error adding comment to thread: ${getErrorMessage(error)}`)
     }
 }

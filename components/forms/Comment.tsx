@@ -5,19 +5,15 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form"
 import { CommentValidation } from '@/lib/validations/thread';
 import { z } from "zod"
 import {zodResolver} from '@hookform/resolvers/zod'
 import { Input } from '../ui/input';
-import { usePathname, useRouter } from 'next/navigation';
-// import {createThread} from '@/lib/actions/thread.actions';
-import { revalidatePath } from 'next/cache';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { addCommentToThread } from '@/lib/actions/thread.actions';
 interface Props{
@@ -28,7 +24,6 @@ interface Props{
 
 const Comment=({threadId, currentUserImg, currentUserId}:Props)=>{
     const pathname = usePathname()
-    const router = useRouter()
     const form = useForm<z.infer<typeof CommentValidation>>({
         resolver:zodResolver(CommentValidation),
         defaultValues:{

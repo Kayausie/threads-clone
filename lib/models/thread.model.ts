@@ -1,5 +1,4 @@
 import mongoose   from "mongoose";
-import { unique } from "next/dist/build/utils";
 const { Schema, model } = mongoose;
 
 const threadSchema = new Schema({
@@ -27,4 +26,4 @@ const threadSchema = new Schema({
     }]
 })
 const Thread = mongoose.models.Thread||model('Thread', threadSchema); 
-export default Thread; 
+export default Thread;
